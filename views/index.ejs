@@ -1,0 +1,194 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DevOps Dashboard · <%= appName %></title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<div class="scanlines" aria-hidden="true"></div>
+
+<header class="topbar">
+    <div class="topbar-inner">
+        <div class="brand">
+            <span class="brand-mark">&#9679;</span>
+            <span class="brand-name"><%= appName %></span>
+            <span class="tag"><%= version %></span>
+        </div>
+        <div class="status-pill" id="status-pill">
+            <span class="led led-good"></span>
+            <span>ALL SYSTEMS OPERATIONAL</span>
+        </div>
+        <div class="clock" id="current-time"><%= currentTime %></div>
+    </div>
+</header>
+
+<main class="container">
+
+    <section class="hero card" style="--d:0">
+        <div class="hero-head">
+            <h1>Request Path</h1>
+            <p class="muted">Live traffic flow from browser to running pod</p>
+        </div>
+
+        <svg class="pipeline" viewBox="0 0 1000 180" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Deployment pipeline diagram">
+            <defs>
+                <linearGradient id="lineGrad" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stop-color="#29e0c9" stop-opacity="0.15"/>
+                    <stop offset="100%" stop-color="#29e0c9" stop-opacity="0.55"/>
+                </linearGradient>
+            </defs>
+
+            <!-- connectors -->
+            <path d="M85,80 L235,80" class="conn"/>
+            <path d="M255,80 L405,80" class="conn"/>
+            <path d="M425,80 L575,80" class="conn"/>
+            <path d="M595,80 L745,80" class="conn"/>
+            <path d="M765,80 L915,80" class="conn"/>
+
+            <!-- traveling packets -->
+            <circle r="5" class="packet">
+                <animateMotion path="M85,80 L235,80" dur="1.6s" begin="0s" repeatCount="indefinite"/>
+            </circle>
+            <circle r="5" class="packet">
+                <animateMotion path="M255,80 L405,80" dur="1.6s" begin="0.32s" repeatCount="indefinite"/>
+            </circle>
+            <circle r="5" class="packet">
+                <animateMotion path="M425,80 L575,80" dur="1.6s" begin="0.64s" repeatCount="indefinite"/>
+            </circle>
+            <circle r="5" class="packet">
+                <animateMotion path="M595,80 L745,80" dur="1.6s" begin="0.96s" repeatCount="indefinite"/>
+            </circle>
+            <circle r="5" class="packet">
+                <animateMotion path="M765,80 L915,80" dur="1.6s" begin="1.28s" repeatCount="indefinite"/>
+            </circle>
+
+            <!-- nodes -->
+            <g class="node" style="--delay:0s">
+                <rect x="10" y="55" width="75" height="50" rx="10"/>
+                <text x="47" y="85" class="node-icon">&#128421;</text>
+                <circle cx="76" cy="60" r="4" class="node-led"><animate attributeName="opacity" values="1;0.25;1" dur="1.6s" begin="0s" repeatCount="indefinite"/></circle>
+                <text x="47" y="122" class="node-label">Browser</text>
+            </g>
+
+            <g class="node" style="--delay:0.32s">
+                <rect x="180" y="55" width="75" height="50" rx="10"/>
+                <text x="217" y="85" class="node-icon">&#8646;</text>
+                <circle cx="251" cy="60" r="4" class="node-led"><animate attributeName="opacity" values="1;0.25;1" dur="1.6s" begin="0.32s" repeatCount="indefinite"/></circle>
+                <text x="217" y="122" class="node-label">NodePort Svc</text>
+            </g>
+
+            <g class="node" style="--delay:0.64s">
+                <rect x="350" y="55" width="75" height="50" rx="10"/>
+                <text x="387" y="85" class="node-icon">&#9881;</text>
+                <circle cx="421" cy="60" r="4" class="node-led"><animate attributeName="opacity" values="1;0.25;1" dur="1.6s" begin="0.64s" repeatCount="indefinite"/></circle>
+                <text x="387" y="122" class="node-label">Deployment</text>
+            </g>
+
+            <g class="node" style="--delay:0.96s">
+                <rect x="520" y="55" width="75" height="50" rx="10"/>
+                <text x="557" y="85" class="node-icon">&#8862;</text>
+                <circle cx="591" cy="60" r="4" class="node-led"><animate attributeName="opacity" values="1;0.25;1" dur="1.6s" begin="0.96s" repeatCount="indefinite"/></circle>
+                <text x="557" y="122" class="node-label">ReplicaSet</text>
+            </g>
+
+            <g class="node" style="--delay:1.28s">
+                <rect x="690" y="55" width="75" height="50" rx="10"/>
+                <text x="727" y="85" class="node-icon">&#9723;</text>
+                <circle cx="761" cy="60" r="4" class="node-led"><animate attributeName="opacity" values="1;0.25;1" dur="1.6s" begin="1.28s" repeatCount="indefinite"/></circle>
+                <text x="727" y="122" class="node-label">Pod</text>
+            </g>
+
+            <g class="node node-final" style="--delay:1.6s">
+                <rect x="860" y="50" width="90" height="60" rx="10"/>
+                <text x="905" y="83" class="node-icon">&#9889;</text>
+                <circle cx="941" cy="55" r="4" class="node-led"><animate attributeName="opacity" values="1;0.25;1" dur="1.6s" begin="1.6s" repeatCount="indefinite"/></circle>
+                <text x="905" y="128" class="node-label">Node.js App</text>
+            </g>
+        </svg>
+    </section>
+
+    <section class="stat-grid">
+        <div class="card stat" style="--d:1">
+            <span class="stat-label">Pod</span>
+            <span class="stat-value" id="pod-name"><%= podName %></span>
+        </div>
+        <div class="card stat" style="--d:2">
+            <span class="stat-label">Uptime</span>
+            <span class="stat-value" id="uptime"><%= uptimeSeconds %>s</span>
+        </div>
+        <div class="card stat" style="--d:3">
+            <span class="stat-label">Memory</span>
+            <span class="stat-value" id="mem-used"><%= memory.usedMB %> MB</span>
+        </div>
+        <div class="card stat" style="--d:4">
+            <span class="stat-label">Load Avg</span>
+            <span class="stat-value" id="load-avg"><%= loadAvg %></span>
+        </div>
+    </section>
+
+    <section class="card" style="--d:5">
+        <h2>Application Information</h2>
+        <table>
+            <tr><td>Application</td><td><%= appName %></td></tr>
+            <tr><td>Version</td><td><%= version %></td></tr>
+            <tr><td>Runtime</td><td><%= runtime %></td></tr>
+            <tr><td>Container</td><td><%= container %></td></tr>
+            <tr><td>Orchestrator</td><td><%= orchestrator %></td></tr>
+            <tr><td>Service</td><td><%= service %></td></tr>
+            <tr><td>Pod Name</td><td id="pod-name-2"><%= podName %></td></tr>
+            <tr><td>Hostname</td><td id="hostname"><%= hostname %></td></tr>
+            <tr><td>Current Time</td><td id="current-time-2"><%= currentTime %></td></tr>
+            <tr><td>Uptime</td><td id="uptime-2"><%= uptimeSeconds %> seconds</td></tr>
+            <tr><td>Status</td><td><span class="badge-good">Running</span></td></tr>
+        </table>
+    </section>
+
+    <section class="two-col">
+        <div class="card manifest" style="--d:6">
+            <h2><span class="dot dot-cyan"></span>deployment.yaml</h2>
+            <ul class="manifest-list">
+                <li>Creates Deployment</li>
+                <li>Creates ReplicaSet</li>
+                <li>Maintains desired replica count</li>
+                <li>Performs rolling updates</li>
+                <li>Restarts failed pods automatically</li>
+            </ul>
+        </div>
+        <div class="card manifest" style="--d:7">
+            <h2><span class="dot dot-amber"></span>service.yaml</h2>
+            <ul class="manifest-list">
+                <li>Creates NodePort service</li>
+                <li>Exposes application</li>
+                <li>Provides a stable IP</li>
+                <li>Load balances requests</li>
+                <li>Maps 30080 &rarr; 3000</li>
+            </ul>
+        </div>
+    </section>
+
+    <section class="card health-card" style="--d:8">
+        <div class="health-left">
+            <h2>Health Endpoint</h2>
+            <p class="muted">Poll <code>/health</code> to check whether this pod is ready to serve traffic.</p>
+        </div>
+        <a href="/health" target="_blank" class="ping-btn">
+            <span class="ping-ring"></span>
+            /health
+        </a>
+    </section>
+
+    <footer class="footer">
+        Built for Kubernetes &middot; served from pod <span id="footer-pod"><%= podName %></span>
+    </footer>
+
+</main>
+
+<script src="/script.js"></script>
+</body>
+</html>
