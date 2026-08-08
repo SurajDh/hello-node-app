@@ -66,9 +66,27 @@ pipeline {
             bat 'git checkout main'
             bat 'git pull origin main'
 
-            bat 'powershell -NoProfile -Command "$file=''deployment.yaml''; $content=Get-Content -Path $file -Raw; $content=$content -replace ''image:\s*surajsdm/hello-node:\S+'', ''image: surajsdm/hello-node:%IMAGE_TAG%''; Set-Content -Path $file -Value $content -NoNewline"'
+            writeFile file: 'update-image.ps1', text: '''
+param(
+    [string]$Tag
+)
 
-            echo '===== UPDATED DEPLOYMENT ====='
+$file = "deployment.yaml"
+
+$content = Get-Content -Path $file -Raw
+
+$content = $content -replace `
+    'image:\s*surajsdm/hello-node:\S+', `
+    "image: surajsdm/hello-node:$Tag"
+
+Set-Content -Path $file -Value $content -NoNewline
+
+Write-Host "Updated image to: surajsdm/hello-node:$Tag"
+'''
+
+            bat 'powershell -NoProfile -ExecutionPolicy Bypass -File update-image.ps1 -Tag "%IMAGE_TAG%"'
+
+            echo '===== DEPLOYMENT.YAML ====='
 
             bat 'type deployment.yaml'
 
@@ -80,6 +98,8 @@ pipeline {
             bat 'git config user.email "jenkins@localhost"'
 
             bat 'git add deployment.yaml'
+
+            echo '===== STAGED DIFF ====='
 
             bat 'git diff --cached -- deployment.yaml'
 
