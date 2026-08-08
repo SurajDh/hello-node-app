@@ -70,9 +70,29 @@ $file = "deployment.yaml"
 
 $content = Get-Content -Path $file -Raw
 
-$content = $content -replace 'image:\s*surajsdm/hello-node:\S+', "image: surajsdm/hello-node:$Tag"
+$oldImage = "surajsdm/hello-node:"
+$start = $content.IndexOf($oldImage)
+
+if ($start -lt 0) {
+    Write-Error "Docker image was not found in deployment.yaml"
+    exit 1
+}
+
+$end = $content.IndexOf("`n", $start)
+
+if ($end -lt 0) {
+    $end = $content.Length
+}
+
+$currentLine = $content.Substring($start, $end - $start)
+
+$newLine = "surajsdm/hello-node:$Tag"
+
+$content = $content.Replace($currentLine, $newLine)
 
 Set-Content -Path $file -Value $content -NoNewline
+
+Write-Host "Updated image to surajsdm/hello-node:$Tag"
 '''
 
                     bat 'powershell -NoProfile -ExecutionPolicy Bypass -File update-image.ps1 -Tag "%IMAGE_TAG%"'
