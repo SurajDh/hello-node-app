@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -30,13 +29,136 @@
 
 <main class="container">
 
+    <!-- ============ SECTION 1: CI/CD / GITOPS PIPELINE ============ -->
     <section class="hero card" style="--d:0">
         <div class="hero-head">
-            <h1>Request Path</h1>
-            <p class="muted">Live traffic flow from browser to running pod</p>
+            <span class="eyebrow">01 &middot; Build &amp; Release</span>
+            <h1>CI/CD Pipeline &mdash; GitOps</h1>
+            <p class="muted">From a developer's git push to a running pod, fully automated end to end.</p>
         </div>
 
-        <svg class="pipeline" viewBox="0 0 1000 180" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Deployment pipeline diagram">
+        <svg class="pipeline pipeline-cicd" viewBox="0 0 1010 330" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="CI/CD GitOps pipeline diagram">
+            <defs>
+                <linearGradient id="lineGrad2" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stop-color="#29e0c9" stop-opacity="0.15"/>
+                    <stop offset="100%" stop-color="#29e0c9" stop-opacity="0.55"/>
+                </linearGradient>
+                <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M0,0 L10,5 L0,10 z" fill="#29e0c9"/>
+                </marker>
+            </defs>
+
+            <!-- row 1: CI -->
+            <path d="M120,57 L235,57" class="conn" marker-end="url(#arrow)"/>
+            <path d="M335,57 L450,57" class="conn" marker-end="url(#arrow)"/>
+            <path d="M550,57 L665,57" class="conn" marker-end="url(#arrow)"/>
+            <path d="M765,57 L880,57" class="conn" marker-end="url(#arrow)"/>
+            <!-- handoff -->
+            <path d="M930,85 L930,210" class="conn" marker-end="url(#arrow)"/>
+            <!-- row 2: CD (right to left) -->
+            <path d="M880,242 L765,242" class="conn" marker-end="url(#arrow)"/>
+            <path d="M665,242 L550,242" class="conn" marker-end="url(#arrow)"/>
+            <path d="M450,242 L335,242" class="conn" marker-end="url(#arrow)"/>
+            <path d="M235,242 L120,242" class="conn" marker-end="url(#arrow)"/>
+
+            <!-- traveling packets -->
+            <circle r="5" class="packet"><animateMotion path="M120,57 L235,57" dur="1.6s" begin="0s" repeatCount="indefinite"/></circle>
+            <circle r="5" class="packet"><animateMotion path="M335,57 L450,57" dur="1.6s" begin="0.32s" repeatCount="indefinite"/></circle>
+            <circle r="5" class="packet"><animateMotion path="M550,57 L665,57" dur="1.6s" begin="0.64s" repeatCount="indefinite"/></circle>
+            <circle r="5" class="packet"><animateMotion path="M765,57 L880,57" dur="1.6s" begin="0.96s" repeatCount="indefinite"/></circle>
+            <circle r="5" class="packet"><animateMotion path="M930,85 L930,210" dur="1.3s" begin="1.28s" repeatCount="indefinite"/></circle>
+            <circle r="5" class="packet packet-amber"><animateMotion path="M880,242 L765,242" dur="1.6s" begin="1.58s" repeatCount="indefinite"/></circle>
+            <circle r="5" class="packet packet-amber"><animateMotion path="M665,242 L550,242" dur="1.6s" begin="1.9s" repeatCount="indefinite"/></circle>
+            <circle r="5" class="packet packet-amber"><animateMotion path="M450,242 L335,242" dur="1.6s" begin="2.22s" repeatCount="indefinite"/></circle>
+            <circle r="5" class="packet packet-amber"><animateMotion path="M235,242 L120,242" dur="1.6s" begin="2.54s" repeatCount="indefinite"/></circle>
+
+            <!-- row 1 nodes -->
+            <g class="node">
+                <rect x="20" y="30" width="100" height="55" rx="10"/>
+                <text x="70" y="63" class="node-code">PUSH</text>
+                <circle cx="112" cy="38" r="4" class="node-led"><animate attributeName="opacity" values="1;0.25;1" dur="1.6s" begin="0s" repeatCount="indefinite"/></circle>
+                <text x="70" y="120" class="node-label">Developer</text>
+            </g>
+            <g class="node">
+                <rect x="235" y="30" width="100" height="55" rx="10"/>
+                <text x="285" y="63" class="node-code">REPO</text>
+                <circle cx="327" cy="38" r="4" class="node-led"><animate attributeName="opacity" values="1;0.25;1" dur="1.6s" begin="0.32s" repeatCount="indefinite"/></circle>
+                <text x="285" y="120" class="node-label">Git (app code)</text>
+            </g>
+            <g class="node">
+                <rect x="450" y="30" width="100" height="55" rx="10"/>
+                <text x="500" y="63" class="node-code">CI</text>
+                <circle cx="542" cy="38" r="4" class="node-led"><animate attributeName="opacity" values="1;0.25;1" dur="1.6s" begin="0.64s" repeatCount="indefinite"/></circle>
+                <text x="500" y="120" class="node-label">Jenkins</text>
+            </g>
+            <g class="node">
+                <rect x="665" y="30" width="100" height="55" rx="10"/>
+                <text x="715" y="63" class="node-code">BUILD</text>
+                <circle cx="757" cy="38" r="4" class="node-led"><animate attributeName="opacity" values="1;0.25;1" dur="1.6s" begin="0.96s" repeatCount="indefinite"/></circle>
+                <text x="715" y="120" class="node-label">Docker Build</text>
+            </g>
+            <g class="node node-final">
+                <rect x="880" y="30" width="100" height="55" rx="10"/>
+                <text x="930" y="63" class="node-code">HUB</text>
+                <circle cx="972" cy="38" r="4" class="node-led"><animate attributeName="opacity" values="1;0.25;1" dur="1.6s" begin="1.28s" repeatCount="indefinite"/></circle>
+                <text x="930" y="120" class="node-label">Docker Hub</text>
+            </g>
+
+            <!-- row 2 nodes -->
+            <g class="node node-final">
+                <rect x="880" y="210" width="100" height="55" rx="10"/>
+                <text x="930" y="243" class="node-code">REPO</text>
+                <circle cx="972" cy="218" r="4" class="node-led"><animate attributeName="opacity" values="1;0.25;1" dur="1.6s" begin="1.58s" repeatCount="indefinite"/></circle>
+                <text x="930" y="300" class="node-label">Deploy repo</text>
+            </g>
+            <g class="node">
+                <rect x="665" y="210" width="100" height="55" rx="10"/>
+                <text x="715" y="243" class="node-code">ARGO</text>
+                <circle cx="757" cy="218" r="4" class="node-led"><animate attributeName="opacity" values="1;0.25;1" dur="1.6s" begin="1.9s" repeatCount="indefinite"/></circle>
+                <text x="715" y="300" class="node-label">Argo CD</text>
+            </g>
+            <g class="node">
+                <rect x="450" y="210" width="100" height="55" rx="10"/>
+                <text x="500" y="243" class="node-code">SYNC</text>
+                <circle cx="542" cy="218" r="4" class="node-led"><animate attributeName="opacity" values="1;0.25;1" dur="1.6s" begin="2.22s" repeatCount="indefinite"/></circle>
+                <text x="500" y="300" class="node-label">K8s Sync</text>
+            </g>
+            <g class="node">
+                <rect x="235" y="210" width="100" height="55" rx="10"/>
+                <text x="285" y="243" class="node-code">ROLL</text>
+                <circle cx="327" cy="218" r="4" class="node-led"><animate attributeName="opacity" values="1;0.25;1" dur="1.6s" begin="2.54s" repeatCount="indefinite"/></circle>
+                <text x="285" y="300" class="node-label">Rollout</text>
+            </g>
+            <g class="node">
+                <rect x="20" y="210" width="100" height="55" rx="10"/>
+                <text x="70" y="243" class="node-code">LIVE</text>
+                <circle cx="112" cy="218" r="4" class="node-led"><animate attributeName="opacity" values="1;0.25;1" dur="1.6s" begin="2.86s" repeatCount="indefinite"/></circle>
+                <text x="70" y="300" class="node-label">Running pod</text>
+            </g>
+
+            <text x="930" y="150" class="row-tag row-tag-cyan">CI &darr;</text>
+            <text x="70" y="195" class="row-tag row-tag-amber">CD &larr;</text>
+        </svg>
+
+        <ol class="step-legend">
+            <li><b>Push.</b> You commit and push code to the app's Git repo &mdash; the only manual step.</li>
+            <li><b>Detect.</b> Jenkins polls the repo (or receives a webhook) and triggers the pipeline on its own.</li>
+            <li><b>Build &amp; publish.</b> Jenkins checks out the code, builds a Docker image, and pushes it to Docker Hub with a new tag.</li>
+            <li><b>Update manifests.</b> Jenkins edits the image tag in the deployment repo and pushes that change &mdash; this is the GitOps handoff.</li>
+            <li><b>Sync.</b> Argo CD is watching the deployment repo, sees the new commit, and auto-syncs it into the cluster.</li>
+            <li><b>Rollout.</b> Kubernetes rolls out new pods with the new image and retires the old ones once the new ones are healthy.</li>
+        </ol>
+    </section>
+
+    <!-- ============ SECTION 2: LIVE REQUEST PATH ============ -->
+    <section class="hero card" style="--d:1">
+        <div class="hero-head">
+            <span class="eyebrow">02 &middot; Runtime</span>
+            <h1>Live Request Path</h1>
+            <p class="muted">How traffic reaches this exact pod once it's deployed</p>
+        </div>
+
+        <svg class="pipeline" viewBox="0 0 1000 180" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Request path diagram">
             <defs>
                 <linearGradient id="lineGrad" x1="0" y1="0" x2="1" y2="0">
                     <stop offset="0%" stop-color="#29e0c9" stop-opacity="0.15"/>
@@ -44,67 +166,49 @@
                 </linearGradient>
             </defs>
 
-            <!-- connectors -->
             <path d="M85,80 L235,80" class="conn"/>
             <path d="M255,80 L405,80" class="conn"/>
             <path d="M425,80 L575,80" class="conn"/>
             <path d="M595,80 L745,80" class="conn"/>
             <path d="M765,80 L915,80" class="conn"/>
 
-            <!-- traveling packets -->
-            <circle r="5" class="packet">
-                <animateMotion path="M85,80 L235,80" dur="1.6s" begin="0s" repeatCount="indefinite"/>
-            </circle>
-            <circle r="5" class="packet">
-                <animateMotion path="M255,80 L405,80" dur="1.6s" begin="0.32s" repeatCount="indefinite"/>
-            </circle>
-            <circle r="5" class="packet">
-                <animateMotion path="M425,80 L575,80" dur="1.6s" begin="0.64s" repeatCount="indefinite"/>
-            </circle>
-            <circle r="5" class="packet">
-                <animateMotion path="M595,80 L745,80" dur="1.6s" begin="0.96s" repeatCount="indefinite"/>
-            </circle>
-            <circle r="5" class="packet">
-                <animateMotion path="M765,80 L915,80" dur="1.6s" begin="1.28s" repeatCount="indefinite"/>
-            </circle>
+            <circle r="5" class="packet"><animateMotion path="M85,80 L235,80" dur="1.6s" begin="0s" repeatCount="indefinite"/></circle>
+            <circle r="5" class="packet"><animateMotion path="M255,80 L405,80" dur="1.6s" begin="0.32s" repeatCount="indefinite"/></circle>
+            <circle r="5" class="packet"><animateMotion path="M425,80 L575,80" dur="1.6s" begin="0.64s" repeatCount="indefinite"/></circle>
+            <circle r="5" class="packet"><animateMotion path="M595,80 L745,80" dur="1.6s" begin="0.96s" repeatCount="indefinite"/></circle>
+            <circle r="5" class="packet"><animateMotion path="M765,80 L915,80" dur="1.6s" begin="1.28s" repeatCount="indefinite"/></circle>
 
-            <!-- nodes -->
-            <g class="node" style="--delay:0s">
+            <g class="node">
                 <rect x="10" y="55" width="75" height="50" rx="10"/>
                 <text x="47" y="85" class="node-icon">&#128421;</text>
                 <circle cx="76" cy="60" r="4" class="node-led"><animate attributeName="opacity" values="1;0.25;1" dur="1.6s" begin="0s" repeatCount="indefinite"/></circle>
                 <text x="47" y="122" class="node-label">Browser</text>
             </g>
-
-            <g class="node" style="--delay:0.32s">
+            <g class="node">
                 <rect x="180" y="55" width="75" height="50" rx="10"/>
                 <text x="217" y="85" class="node-icon">&#8646;</text>
                 <circle cx="251" cy="60" r="4" class="node-led"><animate attributeName="opacity" values="1;0.25;1" dur="1.6s" begin="0.32s" repeatCount="indefinite"/></circle>
                 <text x="217" y="122" class="node-label">NodePort Svc</text>
             </g>
-
-            <g class="node" style="--delay:0.64s">
+            <g class="node">
                 <rect x="350" y="55" width="75" height="50" rx="10"/>
                 <text x="387" y="85" class="node-icon">&#9881;</text>
                 <circle cx="421" cy="60" r="4" class="node-led"><animate attributeName="opacity" values="1;0.25;1" dur="1.6s" begin="0.64s" repeatCount="indefinite"/></circle>
                 <text x="387" y="122" class="node-label">Deployment</text>
             </g>
-
-            <g class="node" style="--delay:0.96s">
+            <g class="node">
                 <rect x="520" y="55" width="75" height="50" rx="10"/>
                 <text x="557" y="85" class="node-icon">&#8862;</text>
                 <circle cx="591" cy="60" r="4" class="node-led"><animate attributeName="opacity" values="1;0.25;1" dur="1.6s" begin="0.96s" repeatCount="indefinite"/></circle>
                 <text x="557" y="122" class="node-label">ReplicaSet</text>
             </g>
-
-            <g class="node" style="--delay:1.28s">
+            <g class="node">
                 <rect x="690" y="55" width="75" height="50" rx="10"/>
                 <text x="727" y="85" class="node-icon">&#9723;</text>
                 <circle cx="761" cy="60" r="4" class="node-led"><animate attributeName="opacity" values="1;0.25;1" dur="1.6s" begin="1.28s" repeatCount="indefinite"/></circle>
                 <text x="727" y="122" class="node-label">Pod</text>
             </g>
-
-            <g class="node node-final" style="--delay:1.6s">
+            <g class="node node-final">
                 <rect x="860" y="50" width="90" height="60" rx="10"/>
                 <text x="905" y="83" class="node-icon">&#9889;</text>
                 <circle cx="941" cy="55" r="4" class="node-led"><animate attributeName="opacity" values="1;0.25;1" dur="1.6s" begin="1.6s" repeatCount="indefinite"/></circle>
@@ -114,29 +218,31 @@
     </section>
 
     <section class="stat-grid">
-        <div class="card stat" style="--d:1">
+        <div class="card stat" style="--d:2">
             <span class="stat-label">Pod</span>
             <span class="stat-value" id="pod-name"><%= podName %></span>
         </div>
-        <div class="card stat" style="--d:2">
+        <div class="card stat" style="--d:3">
             <span class="stat-label">Uptime</span>
             <span class="stat-value" id="uptime"><%= uptimeSeconds %>s</span>
         </div>
-        <div class="card stat" style="--d:3">
-            <span class="stat-label">Memory</span>
-            <span class="stat-value" id="mem-used"><%= memory.usedMB %> MB</span>
-        </div>
         <div class="card stat" style="--d:4">
-            <span class="stat-label">Load Avg</span>
-            <span class="stat-value" id="load-avg"><%= loadAvg %></span>
+            <span class="stat-label">Build</span>
+            <span class="stat-value" id="build-number"><%= buildNumber %></span>
+        </div>
+        <div class="card stat" style="--d:5">
+            <span class="stat-label">Commit</span>
+            <span class="stat-value" id="git-commit"><%= gitCommit %></span>
         </div>
     </section>
 
-    <section class="card" style="--d:5">
+    <section class="card" style="--d:6">
         <h2>Application Information</h2>
         <table>
             <tr><td>Application</td><td><%= appName %></td></tr>
             <tr><td>Version</td><td><%= version %></td></tr>
+            <tr><td>Build Number</td><td id="build-number-2"><%= buildNumber %></td></tr>
+            <tr><td>Git Commit</td><td id="git-commit-2"><%= gitCommit %></td></tr>
             <tr><td>Runtime</td><td><%= runtime %></td></tr>
             <tr><td>Container</td><td><%= container %></td></tr>
             <tr><td>Orchestrator</td><td><%= orchestrator %></td></tr>
@@ -145,12 +251,30 @@
             <tr><td>Hostname</td><td id="hostname"><%= hostname %></td></tr>
             <tr><td>Current Time</td><td id="current-time-2"><%= currentTime %></td></tr>
             <tr><td>Uptime</td><td id="uptime-2"><%= uptimeSeconds %> seconds</td></tr>
+            <tr><td>Memory</td><td id="mem-used-2"><%= memory.usedMB %> / <%= memory.totalMB %> MB</td></tr>
+            <tr><td>Load Avg</td><td id="load-avg-2"><%= loadAvg %></td></tr>
             <tr><td>Status</td><td><span class="badge-good">Running</span></td></tr>
         </table>
     </section>
 
-    <section class="two-col">
-        <div class="card manifest" style="--d:6">
+    <!-- ============ VALUE EXPLAINER ============ -->
+    <section class="card" style="--d:7">
+        <h2>What Am I Looking At?</h2>
+        <p class="muted" style="margin-bottom:16px;">Where each value above actually comes from.</p>
+        <div class="explain-grid">
+            <div class="explain-item"><span class="ek">Version / Build / Commit</span><span class="ev">Not hardcoded &mdash; read from <code>APP_VERSION</code>, <code>BUILD_NUMBER</code>, <code>GIT_COMMIT</code> env vars. Jenkins sets these automatically during the pipeline and can pass them into the image or the deployment manifest.</span></div>
+            <div class="explain-item"><span class="ek">Runtime</span><span class="ev"><code>process.version</code> &mdash; the exact Node.js version baked into the container image.</span></div>
+            <div class="explain-item"><span class="ek">Container / Orchestrator</span><span class="ev">Static labels confirming this process runs inside Docker, managed by Kubernetes &mdash; not something the app can fully self-detect, but true in this deployment.</span></div>
+            <div class="explain-item"><span class="ek">Service</span><span class="ev">The Kubernetes Service type exposing this pod. NodePort here opens a fixed port (30080) on every cluster node and forwards it to the pod's port 3000.</span></div>
+            <div class="explain-item"><span class="ek">Pod Name / Hostname</span><span class="ev"><code>os.hostname()</code> &mdash; inside a Kubernetes pod, the container's hostname defaults to the pod name, so this doubles as a live pod identifier.</span></div>
+            <div class="explain-item"><span class="ek">Uptime</span><span class="ev"><code>process.uptime()</code> &mdash; seconds since this Node process started. It resets to 0 on every restart or rollout, so a sudden reset means a crash or redeploy just happened.</span></div>
+            <div class="explain-item"><span class="ek">Memory</span><span class="ev"><code>process.memoryUsage().rss</code> vs <code>os.totalmem()</code> &mdash; actual RAM this process is using against what the node has available.</span></div>
+            <div class="explain-item"><span class="ek">Load Avg</span><span class="ev"><code>os.loadavg()</code> &mdash; 1-minute average CPU demand on the underlying node; consistently high values signal the node is under pressure.</span></div>
+        </div>
+    </section>
+
+    <section class="three-col">
+        <div class="card manifest" style="--d:8">
             <h2><span class="dot dot-cyan"></span>deployment.yaml</h2>
             <ul class="manifest-list">
                 <li>Creates Deployment</li>
@@ -160,7 +284,7 @@
                 <li>Restarts failed pods automatically</li>
             </ul>
         </div>
-        <div class="card manifest" style="--d:7">
+        <div class="card manifest" style="--d:9">
             <h2><span class="dot dot-amber"></span>service.yaml</h2>
             <ul class="manifest-list">
                 <li>Creates NodePort service</li>
@@ -170,9 +294,19 @@
                 <li>Maps 30080 &rarr; 3000</li>
             </ul>
         </div>
+        <div class="card manifest" style="--d:10">
+            <h2><span class="dot dot-purple"></span>argocd-application</h2>
+            <ul class="manifest-list">
+                <li>Watches the deploy repo path</li>
+                <li>Auto-syncs on new commits</li>
+                <li>Self-heals manual drift</li>
+                <li>Prunes removed resources</li>
+                <li>No <code>kubectl apply</code> needed</li>
+            </ul>
+        </div>
     </section>
 
-    <section class="card health-card" style="--d:8">
+    <section class="card health-card" style="--d:11">
         <div class="health-left">
             <h2>Health Endpoint</h2>
             <p class="muted">Poll <code>/health</code> to check whether this pod is ready to serve traffic.</p>

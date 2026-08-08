@@ -1,5 +1,3 @@
-
-
 const POLL_INTERVAL_MS = 3000;
 
 function flash(el){
@@ -33,8 +31,12 @@ async function refresh(){
         setText("current-time-2", data.currentTime);
         setText("uptime", data.uptimeSeconds + "s");
         setText("uptime-2", data.uptimeSeconds + " seconds");
-        setText("mem-used", data.memory.usedMB + " MB");
-        setText("load-avg", data.loadAvg);
+        setText("build-number", data.buildNumber);
+        setText("build-number-2", data.buildNumber);
+        setText("git-commit", data.gitCommit);
+        setText("git-commit-2", data.gitCommit);
+        setText("mem-used-2", data.memory.usedMB + " / " + data.memory.totalMB + " MB");
+        setText("load-avg-2", data.loadAvg);
     }catch(err){
         const pill = document.getElementById("status-pill");
         if(pill){

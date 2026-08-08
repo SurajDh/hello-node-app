@@ -1,5 +1,3 @@
-
-
 :root{
     --bg:#090c11;
     --bg-panel:#10151d;
@@ -109,9 +107,18 @@ h2{font-family:var(--mono);font-size:16px;margin:0 0 16px;display:flex;align-ite
 
 /* ---------- hero / pipeline ---------- */
 .hero-head{margin-bottom:8px;}
+.eyebrow{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:.12em;
+    color:var(--accent);
+    text-transform:uppercase;
+}
 .pipeline{width:100%;height:auto;display:block;margin-top:10px;}
-.conn{stroke:url(#lineGrad);stroke-width:2;fill:none;stroke-dasharray:4 6;}
+.pipeline-cicd{margin-top:14px;}
+.conn{stroke:url(#lineGrad2);stroke-width:2;fill:none;stroke-dasharray:4 6;}
 .packet{fill:var(--accent);filter:drop-shadow(0 0 6px var(--accent));}
+.packet-amber{fill:var(--amber);filter:drop-shadow(0 0 6px var(--amber));}
 .node rect{
     fill:var(--bg-panel-hover);
     stroke:var(--border);
@@ -123,6 +130,14 @@ h2{font-family:var(--mono);font-size:16px;margin:0 0 16px;display:flex;align-ite
     font-size:20px;
     fill:var(--text);
 }
+.node-code{
+    text-anchor:middle;
+    font-family:var(--mono);
+    font-size:14px;
+    font-weight:700;
+    letter-spacing:.03em;
+    fill:var(--accent);
+}
 .node-label{
     text-anchor:middle;
     font-family:var(--mono);
@@ -130,6 +145,48 @@ h2{font-family:var(--mono);font-size:16px;margin:0 0 16px;display:flex;align-ite
     fill:var(--text-dim);
 }
 .node-led{fill:var(--accent);filter:drop-shadow(0 0 4px var(--accent));}
+.row-tag{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:.08em;
+    text-anchor:middle;
+}
+.row-tag-cyan{fill:var(--accent);opacity:.7;}
+.row-tag-amber{fill:var(--amber);opacity:.7;}
+
+/* ---------- step legend ---------- */
+.step-legend{
+    margin:20px 0 0;
+    padding-left:20px;
+    font-size:13.5px;
+    color:var(--text-dim);
+    line-height:1.9;
+}
+.step-legend b{color:var(--text);font-family:var(--mono);}
+
+/* ---------- explainer grid ---------- */
+.explain-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px 24px;
+}
+.explain-item{display:flex;flex-direction:column;gap:4px;}
+.ek{
+    font-family:var(--mono);
+    font-size:12.5px;
+    font-weight:600;
+    color:var(--accent);
+}
+.ev{font-size:13px;color:var(--text-dim);line-height:1.55;}
+.ev code{
+    font-family:var(--mono);
+    font-size:12px;
+    background:rgba(255,255,255,.04);
+    border:1px solid var(--border);
+    padding:1px 5px;
+    border-radius:4px;
+    color:var(--text);
+}
 
 /* ---------- stat grid ---------- */
 .stat-grid{
@@ -176,13 +233,25 @@ tr:hover td{background:rgba(255,255,255,.015);}
 /* ---------- manifests ---------- */
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
 .two-col .card{margin-top:0;}
+.three-col{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.three-col .card{margin-top:0;}
 .dot{width:9px;height:9px;border-radius:50%;display:inline-block;}
 .dot-cyan{background:var(--accent);box-shadow:0 0 6px var(--accent);}
 .dot-amber{background:var(--amber);box-shadow:0 0 6px var(--amber);}
+.dot-purple{background:#a78bfa;box-shadow:0 0 6px #a78bfa;}
 .manifest-list{list-style:none;margin:0;padding:0;font-family:var(--mono);font-size:13.5px;color:var(--text-dim);}
 .manifest-list li{padding:7px 0;border-bottom:1px dashed var(--border);}
 .manifest-list li::before{content:"> ";color:var(--accent);}
 .manifest-list li:last-child{border-bottom:none;}
+.manifest-list code{
+    font-family:var(--mono);
+    font-size:12px;
+    background:rgba(255,255,255,.04);
+    border:1px solid var(--border);
+    padding:1px 5px;
+    border-radius:4px;
+    color:var(--text);
+}
 
 /* ---------- health card ---------- */
 .health-card{
@@ -247,7 +316,10 @@ tr:hover td{background:rgba(255,255,255,.015);}
 @media (max-width:720px){
     .stat-grid{grid-template-columns:repeat(2,1fr);}
     .two-col{grid-template-columns:1fr;}
+    .three-col{grid-template-columns:1fr;}
+    .explain-grid{grid-template-columns:1fr;}
     .pipeline{min-width:640px;}
+    .pipeline-cicd{min-width:760px;}
     .hero{overflow-x:auto;}
 }
 
