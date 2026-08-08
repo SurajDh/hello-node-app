@@ -10,7 +10,7 @@ app.use(express.static("public"));
 
 function buildInfo() {
     return {
-        appName: "Node App Deployment - DevOps",
+        appName: "Node App Deployment - DevOps ",
 
         version: process.env.APP_VERSION || "local",
         buildNumber: process.env.BUILD_NUMBER || "local",
