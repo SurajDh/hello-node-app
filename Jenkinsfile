@@ -14,12 +14,12 @@ pipeline {
             steps {
                 checkout scm
 
-                script {
-                    env.GIT_COMMIT_SHORT = bat(
-                        returnStdout: true,
-                        script: 'git rev-parse --short=7 HEAD'
-                    ).trim()
-                }
+script {
+    env.GIT_COMMIT_SHORT = bat(
+        returnStdout: true,
+        script: '@git rev-parse --short=7 HEAD'
+    ).trim()
+}
             }
         }
 
