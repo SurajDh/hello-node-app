@@ -4,7 +4,8 @@ pipeline {
 
     environment {
         IMAGE_NAME = "surajsdm/hello-node"
-        IMAGE_TAG  = "${BUILD_NUMBER}"
+        IMAGE_TAG = "${BUILD_NUMBER}"
+
         GITOPS_REPO = "https://github.com/surajDh/hello-node-gitops.git"
     }
 
@@ -40,60 +41,86 @@ pipeline {
                 withCredentials([
                     usernamePassword(
                         credentialsId: 'dockerhub-creds',
-                        usernameVariable: 'DOCKER_USERNAME',
+                        usernameVariable: 'DOCKER_USER',
                         passwordVariable: 'DOCKER_PASSWORD'
                     )
                 ]) {
 
-                    bat 'docker login -u "%DOCKER_USERNAME%" -p "%DOCKER_PASSWORD%"'
+                    bat 'docker login -u %DOCKER_USER% -p %DOCKER_PASSWORD%'
 
-                    bat "docker push %IMAGE_NAME%:%IMAGE_TAG%"
+                    bat 'docker push %IMAGE_NAME%:%IMAGE_TAG%'
                 }
             }
         }
 
-stage('Update GitOps Repository') {
-    steps {
+        stage('Update GitOps Repository') {
 
-        dir('gitops') {
+            steps {
 
-            git(
-                url: "${GITOPS_REPO}",
-                branch: 'main',
-                credentialsId: 'github-creds'
-            )
+                dir('gitops') {
 
-            bat """
-                powershell -Command "(Get-Content deployment.yaml) -replace '(^\\s*image:\\s*surajsdm/hello-node:)[^\\s]+', ('`$1' + '%IMAGE_TAG%') | Set-Content deployment.yaml"
-            """
+                    git branch: 'main',
+                        credentialsId: 'github-creds',
+                        url: "${GITOPS_REPO}"
 
-            echo "Updated deployment.yaml to image: ${IMAGE_NAME}:${IMAGE_TAG}"
+                    bat '''
+                        git checkout main
+                        git pull origin main
+                    '''
 
-            bat 'git diff -- deployment.yaml'
+                    bat '''
+                        powershell -NoProfile -Command ^
+                        "$file = 'deployment.yaml'; ^
+                        $content = Get-Content $file -Raw; ^
+                        $content = $content -replace 'image:\\s*surajsdm/hello-node:\\S+', 'image: surajsdm/hello-node:%IMAGE_TAG%'; ^
+                        Set-Content $file $content -NoNewline"
+                    '''
 
-            bat 'git config user.name "Jenkins"'
-            bat 'git config user.email "jenkins@localhost"'
+                    echo "Checking updated deployment.yaml..."
 
-            bat """
-                git diff --quiet -- deployment.yaml
-                if %ERRORLEVEL% EQU 0 (
-                    echo No changes detected in deployment.yaml
-                ) else (
-                    git add deployment.yaml
-                    git commit -m "Update hello-node image to %IMAGE_TAG%"
-                    git push origin main
-                )
-            """
+                    bat 'type deployment.yaml'
+
+                    echo "Checking Git diff..."
+
+                    bat 'git diff -- deployment.yaml'
+
+                    bat '''
+                        git config user.name "Jenkins"
+                        git config user.email "jenkins@localhost"
+
+                        git add deployment.yaml
+
+                        git diff --cached --quiet
+                        if %ERRORLEVEL% EQU 0 (
+                            echo No changes detected.
+                            exit /b 1
+                        )
+
+                        git commit -m "Update hello-node image to %IMAGE_TAG%"
+                    '''
+
+                    withCredentials([
+                        usernamePassword(
+                            credentialsId: 'github-creds',
+                            usernameVariable: 'GITHUB_USER',
+                            passwordVariable: 'GITHUB_TOKEN'
+                        )
+                    ]) {
+
+                        bat '''
+                            git push origin main
+                        '''
+                    }
+                }
+            }
         }
-    }
-}
     }
 
     post {
 
         success {
-            echo "CI/CD preparation completed successfully."
-            echo "Docker image: ${IMAGE_NAME}:${IMAGE_TAG}"
+            echo "Pipeline completed successfully."
+            echo "Docker image: %IMAGE_NAME%:%IMAGE_TAG%"
         }
 
         failure {
