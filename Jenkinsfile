@@ -13,6 +13,13 @@ pipeline {
         stage('Checkout') {
             steps {
                 checkout scm
+
+                script {
+                    env.GIT_COMMIT_SHORT = bat(
+                        returnStdout: true,
+                        script: 'git rev-parse --short=7 HEAD'
+                    ).trim()
+                }
             }
         }
 
@@ -49,70 +56,98 @@ pipeline {
             }
         }
 
-stage('Update GitOps Repository') {
-    steps {
-        dir('gitops') {
+        stage('Update GitOps Repository') {
+            steps {
 
-            git branch: 'main',
-                credentialsId: 'github-creds',
-                url: "${GITOPS_REPO}"
+                dir('gitops') {
 
-            bat 'git checkout main'
-            bat 'git pull origin main'
+                    git branch: 'main',
+                        credentialsId: 'github-creds',
+                        url: "${GITOPS_REPO}"
 
-            writeFile file: 'update-image.ps1', text: '''
-param(
-    [string]$Tag,
-    [string]$Commit
-)
+                    bat 'git checkout main'
+                    bat 'git pull origin main'
 
+                    writeFile file: 'update-deployment.ps1', text: '''
 $file = "deployment.yaml"
 
-$content = Get-Content -Path $file -Raw
+$lines = Get-Content $file
 
-$content = $content -replace 'image:\s*surajsdm/hello-node:\S+', "image: surajsdm/hello-node:$Tag"
+$currentVariable = ""
 
-$envBlock = @"
-    env:
-      - name: APP_VERSION
-        value: "$Tag"
-      - name: BUILD_NUMBER
-        value: "$Tag"
-      - name: GIT_COMMIT
-        value: "$Commit"
+for ($i = 0; $i -lt $lines.Count; $i++) {
 
-"@
+    $trimmed = $lines[$i].Trim()
 
-$content = $content -replace '(?ms)\n    ports:', "`r`n$envBlock    ports:"
+    if ($trimmed -eq "- name: APP_VERSION") {
+        $currentVariable = "APP_VERSION"
+        continue
+    }
 
-Set-Content -Path $file -Value $content -NoNewline
-'''
+    if ($trimmed -eq "- name: BUILD_NUMBER") {
+        $currentVariable = "BUILD_NUMBER"
+        continue
+    }
 
-            bat 'powershell -NoProfile -ExecutionPolicy Bypass -File update-image.ps1 -Tag "%IMAGE_TAG%" -Commit "%GIT_COMMIT%"'
+    if ($trimmed -eq "- name: GIT_COMMIT") {
+        $currentVariable = "GIT_COMMIT"
+        continue
+    }
 
-            bat 'type deployment.yaml'
+    if ($trimmed.StartsWith("image: surajsdm/hello-node:")) {
+        $indent = $lines[$i].Substring(0, $lines[$i].Length - $lines[$i].TrimStart().Length)
+        $lines[$i] = $indent + "image: surajsdm/hello-node:" + $env:IMAGE_TAG
+        continue
+    }
 
-            bat 'git diff -- deployment.yaml'
+    if ($trimmed.StartsWith("value:") -and $currentVariable -ne "") {
 
-            bat 'git config user.name "Jenkins"'
-            bat 'git config user.email "jenkins@localhost"'
+        $indent = $lines[$i].Substring(0, $lines[$i].Length - $lines[$i].TrimStart().Length)
 
-            bat 'git add deployment.yaml'
-
-            bat 'git diff --cached -- deployment.yaml'
-
-            bat 'git commit -m "Update hello-node image to %IMAGE_TAG%"'
-
-            bat 'git push origin main'
+        if ($currentVariable -eq "APP_VERSION") {
+            $lines[$i] = $indent + 'value: "' + $env:IMAGE_TAG + '"'
         }
+
+        if ($currentVariable -eq "BUILD_NUMBER") {
+            $lines[$i] = $indent + 'value: "' + $env:IMAGE_TAG + '"'
+        }
+
+        if ($currentVariable -eq "GIT_COMMIT") {
+            $lines[$i] = $indent + 'value: "' + $env:GIT_COMMIT_SHORT + '"'
+        }
+
+        $currentVariable = ""
     }
 }
+
+Set-Content -Path $file -Value $lines
+'''
+
+                    bat 'powershell -NoProfile -ExecutionPolicy Bypass -File update-deployment.ps1'
+
+                    bat 'type deployment.yaml'
+
+                    bat 'git config user.name "Jenkins"'
+                    bat 'git config user.email "jenkins@localhost"'
+
+                    bat 'git add deployment.yaml'
+
+                    bat 'git diff --cached -- deployment.yaml'
+
+                    bat 'git diff --cached --quiet || git commit -m "Update hello-node image to %IMAGE_TAG%"'
+
+                    bat 'git push origin main'
+                }
+            }
+        }
     }
 
     post {
 
         success {
-            echo "Pipeline successful. Docker image: ${IMAGE_NAME}:${IMAGE_TAG}"
+            echo "Pipeline successful."
+            echo "Docker image: ${IMAGE_NAME}:${IMAGE_TAG}"
+            echo "Git commit: ${GIT_COMMIT_SHORT}"
         }
 
         failure {
