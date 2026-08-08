@@ -61,41 +61,17 @@ pipeline {
                     bat 'git checkout main'
                     bat 'git pull origin main'
 
-                    writeFile file: 'update-image.ps1', text: '''
-param(
-    [string]$Tag
-)
-
-$file = "deployment.yaml"
-
-$content = Get-Content -Path $file -Raw
-
-$oldImage = "surajsdm/hello-node:"
-$start = $content.IndexOf($oldImage)
-
-if ($start -lt 0) {
-    Write-Error "Docker image was not found in deployment.yaml"
-    exit 1
-}
-
-$end = $content.IndexOf("`n", $start)
-
-if ($end -lt 0) {
-    $end = $content.Length
-}
-
-$currentLine = $content.Substring($start, $end - $start)
-
-$newLine = "surajsdm/hello-node:$Tag"
-
-$content = $content.Replace($currentLine, $newLine)
-
-Set-Content -Path $file -Value $content -NoNewline
-
-Write-Host "Updated image to surajsdm/hello-node:$Tag"
+                    bat '''
+powershell -NoProfile -ExecutionPolicy Bypass -Command ^
+"$file = 'deployment.yaml'; ^
+$content = Get-Content $file -Raw; ^
+$content = $content -replace 'image:\\s*surajsdm/hello-node:\\S+', 'image: surajsdm/hello-node:%IMAGE_TAG%'; ^
+$content = $content -replace '(?s)env:\\s*.*?(?=\\s*ports:)', 'env:\\r\\n        - name: APP_VERSION\\r\\n          value: "%IMAGE_TAG%"\\r\\n        - name: BUILD_NUMBER\\r\\n          value: "%BUILD_NUMBER%"\\r\\n        - name: GIT_COMMIT\\r\\n          value: "%GIT_COMMIT%"\\r\\n'; ^
+if ($content -notmatch 'name:\\s*APP_VERSION') { ^
+$content = $content -replace '(containerPort:\\s*3000)', 'env:\\r\\n        - name: APP_VERSION\\r\\n          value: "%IMAGE_TAG%"\\r\\n        - name: BUILD_NUMBER\\r\\n          value: "%BUILD_NUMBER%"\\r\\n        - name: GIT_COMMIT\\r\\n          value: "%GIT_COMMIT%"\\r\\n\\r\\n        $1'; ^
+}; ^
+Set-Content $file $content -NoNewline"
 '''
-
-                    bat 'powershell -NoProfile -ExecutionPolicy Bypass -File update-image.ps1 -Tag "%IMAGE_TAG%"'
 
                     bat 'type deployment.yaml'
 

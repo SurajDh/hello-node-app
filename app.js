@@ -10,23 +10,28 @@ app.use(express.static("public"));
 
 function buildInfo() {
     return {
-        appName: "Node App Deployment -DevOps",
+        appName: "Node App Deployment - DevOps",
 
-        version: process.env.APP_VERSION || "v6",
-        buildNumber: process.env.BUILD_NUMBER || "local-dev",
+        version: process.env.APP_VERSION || "local",
+        buildNumber: process.env.BUILD_NUMBER || "local",
         gitCommit: (process.env.GIT_COMMIT || "unknown").substring(0, 7),
+
         runtime: "Node.js " + process.version,
         container: "Docker",
         orchestrator: "Kubernetes",
-        service: "NodePort",
+        service: "Ingress",
+
         hostname: os.hostname(),
         podName: os.hostname(),
+
         currentTime: new Date().toLocaleString(),
         uptimeSeconds: Math.floor(process.uptime()),
+
         memory: {
             usedMB: Math.round(process.memoryUsage().rss / 1024 / 1024),
             totalMB: Math.round(os.totalmem() / 1024 / 1024)
         },
+
         loadAvg: os.loadavg()[0].toFixed(2),
         cpus: os.cpus().length
     };
