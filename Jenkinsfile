@@ -52,30 +52,41 @@ pipeline {
             }
         }
 
-        stage('Update GitOps Repository') {
-            steps {
+stage('Update GitOps Repository') {
+    steps {
 
-                dir('gitops') {
+        dir('gitops') {
 
-                    git(
-                        url: "${GITOPS_REPO}",
-                        branch: 'main',
-                        credentialsId: 'github-creds'
-                    )
+            git(
+                url: "${GITOPS_REPO}",
+                branch: 'main',
+                credentialsId: 'github-creds'
+            )
 
-                    bat """
-                        powershell -Command "(Get-Content deployment.yaml) -replace 'image: surajsdm/hello-node:[0-9]+', 'image: surajsdm/hello-node:%IMAGE_TAG%' | Set-Content deployment.yaml"
-                    """
+            bat """
+                powershell -Command "(Get-Content deployment.yaml) -replace '(^\\s*image:\\s*surajsdm/hello-node:)[^\\s]+', ('`$1' + '%IMAGE_TAG%') | Set-Content deployment.yaml"
+            """
 
-                    bat 'git config user.name "Jenkins"'
-                    bat 'git config user.email "jenkins@localhost"'
+            echo "Updated deployment.yaml to image: ${IMAGE_NAME}:${IMAGE_TAG}"
 
-                    bat 'git add deployment.yaml'
-                    bat 'git commit -m "Update hello-node image to %IMAGE_TAG%"'
-                    bat 'git push origin main'
-                }
-            }
+            bat 'git diff -- deployment.yaml'
+
+            bat 'git config user.name "Jenkins"'
+            bat 'git config user.email "jenkins@localhost"'
+
+            bat """
+                git diff --quiet -- deployment.yaml
+                if %ERRORLEVEL% EQU 0 (
+                    echo No changes detected in deployment.yaml
+                ) else (
+                    git add deployment.yaml
+                    git commit -m "Update hello-node image to %IMAGE_TAG%"
+                    git push origin main
+                )
+            """
         }
+    }
+}
     }
 
     post {
