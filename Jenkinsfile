@@ -53,67 +53,42 @@ pipeline {
             }
         }
 
-        stage('Update GitOps Repository') {
+       stage('Update GitOps Repository') {
 
-            steps {
+    steps {
 
-                dir('gitops') {
+        dir('gitops') {
 
-                    git branch: 'main',
-                        credentialsId: 'github-creds',
-                        url: "${GITOPS_REPO}"
+            git branch: 'main',
+                credentialsId: 'github-creds',
+                url: 'https://github.com/surajDh/hello-node-gitops.git'
 
-                    bat '''
-                        git checkout main
-                        git pull origin main
-                    '''
+            bat 'git checkout main'
+            bat 'git pull origin main'
 
-                    bat '''
-                        powershell -NoProfile -Command ^
-                        "$file = 'deployment.yaml'; ^
-                        $content = Get-Content $file -Raw; ^
-                        $content = $content -replace 'image:\\s*surajsdm/hello-node:\\S+', 'image: surajsdm/hello-node:%IMAGE_TAG%'; ^
-                        Set-Content $file $content -NoNewline"
-                    '''
+            bat 'powershell -NoProfile -Command "$file=''deployment.yaml''; $content=Get-Content -Path $file -Raw; $content=$content -replace ''image:\s*surajsdm/hello-node:\S+'', ''image: surajsdm/hello-node:%IMAGE_TAG%''; Set-Content -Path $file -Value $content -NoNewline"'
 
-                    echo "Checking updated deployment.yaml..."
+            echo '===== UPDATED DEPLOYMENT ====='
 
-                    bat 'type deployment.yaml'
+            bat 'type deployment.yaml'
 
-                    echo "Checking Git diff..."
+            echo '===== GIT DIFF ====='
 
-                    bat 'git diff -- deployment.yaml'
+            bat 'git diff -- deployment.yaml'
 
-                    bat '''
-                        git config user.name "Jenkins"
-                        git config user.email "jenkins@localhost"
+            bat 'git config user.name "Jenkins"'
+            bat 'git config user.email "jenkins@localhost"'
 
-                        git add deployment.yaml
+            bat 'git add deployment.yaml'
 
-                        git diff --cached --quiet
-                        if %ERRORLEVEL% EQU 0 (
-                            echo No changes detected.
-                            exit /b 1
-                        )
+            bat 'git diff --cached -- deployment.yaml'
 
-                        git commit -m "Update hello-node image to %IMAGE_TAG%"
-                    '''
+            bat 'git commit -m "Update hello-node image to %IMAGE_TAG%"'
 
-                    withCredentials([
-                        usernamePassword(
-                            credentialsId: 'github-creds',
-                            usernameVariable: 'GITHUB_USER',
-                            passwordVariable: 'GITHUB_TOKEN'
-                        )
-                    ]) {
-
-                        bat '''
-                            git push origin main
-                        '''
-                    }
-                }
-            }
+            bat 'git push origin main'
         }
+    }
+}
     }
 
     post {
