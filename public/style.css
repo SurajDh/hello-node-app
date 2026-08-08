@@ -292,6 +292,26 @@ tr:hover td{background:rgba(255,255,255,.015);}
     letter-spacing:.03em;
 }
 
+.architecture {
+    margin-top: 30px;
+    padding: 25px;
+    background: #111827;
+    border-radius: 12px;
+    overflow-x: auto;
+}
+
+.architecture h2 {
+    margin-bottom: 20px;
+}
+
+.architecture pre {
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 14px;
+    line-height: 1.5;
+    white-space: pre;
+}
+
+
 /* ---------- animations ---------- */
 @keyframes riseIn{
     to{opacity:1;transform:translateY(0);}
