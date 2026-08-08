@@ -184,24 +184,24 @@
                 <circle cx="76" cy="60" r="4" class="node-led"><animate attributeName="opacity" values="1;0.25;1" dur="1.6s" begin="0s" repeatCount="indefinite"/></circle>
                 <text x="47" y="122" class="node-label">Browser</text>
             </g>
-            <g class="node">
+            <!-- <g class="node">
                 <rect x="180" y="55" width="75" height="50" rx="10"/>
                 <text x="217" y="85" class="node-icon">&#8646;</text>
                 <circle cx="251" cy="60" r="4" class="node-led"><animate attributeName="opacity" values="1;0.25;1" dur="1.6s" begin="0.32s" repeatCount="indefinite"/></circle>
-                <text x="217" y="122" class="node-label">NodePort Svc</text>
-            </g>
+                <text x="217" y="122" class="node-label">Ingress</text>
+            </g> -->
             <g class="node">
                 <rect x="350" y="55" width="75" height="50" rx="10"/>
                 <text x="387" y="85" class="node-icon">&#9881;</text>
                 <circle cx="421" cy="60" r="4" class="node-led"><animate attributeName="opacity" values="1;0.25;1" dur="1.6s" begin="0.64s" repeatCount="indefinite"/></circle>
-                <text x="387" y="122" class="node-label">Deployment</text>
+                <text x="387" y="122" class="node-label">Ingress svc</text>
             </g>
-            <g class="node">
+            <!-- <g class="node">
                 <rect x="520" y="55" width="75" height="50" rx="10"/>
                 <text x="557" y="85" class="node-icon">&#8862;</text>
                 <circle cx="591" cy="60" r="4" class="node-led"><animate attributeName="opacity" values="1;0.25;1" dur="1.6s" begin="0.96s" repeatCount="indefinite"/></circle>
                 <text x="557" y="122" class="node-label">ReplicaSet</text>
-            </g>
+            </g> -->
             <g class="node">
                 <rect x="690" y="55" width="75" height="50" rx="10"/>
                 <text x="727" y="85" class="node-icon">&#9723;</text>
@@ -256,7 +256,45 @@
             <tr><td>Status</td><td><span class="badge-good">Running</span></td></tr>
         </table>
     </section>
+<div class="architecture">
+    <h2>CI/CD & GitOps Architecture</h2>
 
+    <pre>
+Developer
+   │
+   │ git push
+   ▼
+GitHub ────────────────┐
+hello-node-app         │
+                       │ Webhook
+                       ▼
+                    Jenkins
+                       │
+             ┌─────────┴─────────┐
+             │                   │
+             ▼                   ▼
+       Build Docker       Generate metadata
+       image               / update GitOps
+             │                   │
+             ▼                   ▼
+       Docker Hub        hello-node-gitops
+                                 │
+                                 │ Git commit
+                                 ▼
+                              Argo CD
+                                 │
+                                 │ sync
+                                 ▼
+                         Kubernetes Cluster
+                                 │
+                 ┌───────────────┼───────────────┐
+                 ▼               ▼               ▼
+              Service         Ingress         Pods
+                                                 │
+                                                 ▼
+                                            Node.js App
+    </pre>
+</div>
     <!-- ============ VALUE EXPLAINER ============ -->
     <section class="card" style="--d:7">
         <h2>What Am I Looking At?</h2>
