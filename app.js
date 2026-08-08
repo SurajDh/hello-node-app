@@ -10,11 +10,9 @@ app.use(express.static("public"));
 
 function buildInfo() {
     return {
-        appName: "Hello Node DevOps Demo",
-        // In a real pipeline, Jenkins sets these at build/deploy time -
-        // e.g. as Docker build-args baked into the image, or as env vars
-        // in the Kubernetes deployment manifest it updates.
-        version: process.env.APP_VERSION || "v2",
+        appName: "Node App Deployment -DevOps",
+
+        version: process.env.APP_VERSION || "v6",
         buildNumber: process.env.BUILD_NUMBER || "local-dev",
         gitCommit: (process.env.GIT_COMMIT || "unknown").substring(0, 7),
         runtime: "Node.js " + process.version,
